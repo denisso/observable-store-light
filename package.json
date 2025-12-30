@@ -1,6 +1,6 @@
 {
   "name": "dom-store-light",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "A observer-based state manager for node and browser",
   "author": "KUROCHKIN DENIS",
   "license": "MIT",
