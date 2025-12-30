@@ -2,6 +2,11 @@
 
 A **minimal reactive state manager** for projects where you want simple shared state without overhead. 
 
+[CDN](https://www.jsdelivr.com/package/npm/observable-store-light)
+```
+<script src="https://cdn.jsdelivr.net/npm/observable-store-light@1.0.1/dist/index.min.js"></script>
+```
+
 ---
 
 ## Features
@@ -21,6 +26,17 @@ A **minimal reactive state manager** for projects where you want simple shared s
 * **Supports multiple independent stores**
   Create as many stores as you need — each one is fully isolated.
 
+* **State flexibility**
+  Does **not** enforce state serialization.
+
+  You can store **any JavaScript values** in the store:
+  - primitives
+  - objects and arrays
+  - class instances
+  - functions
+  - DOM references
+  - non-serializable values
+  
 * **Tiny bundle size**
 
 ---
@@ -84,7 +100,7 @@ console.log(name, value) // 'count', 1
 
 ---
 
-## 🔍 Reading and updating values
+## Reading and updating values
 
 ```ts
 const currentCount = store.get('count');
@@ -96,7 +112,7 @@ console.log(value) // 2
 
 ---
 
-## 🗂 Multiple Stores Example
+## Multiple Stores Example
 
 ```ts
 const authStore = createStore({
