@@ -1,5 +1,5 @@
 {
-  "name": "dom-store-light",
+  "name": "observable-store-light",
   "version": "1.0.0",
   "description": "A observer-based state manager for node and browser",
   "author": "KUROCHKIN DENIS",
