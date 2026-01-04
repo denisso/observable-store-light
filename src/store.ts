@@ -36,31 +36,31 @@ export const createStore = <T extends object>(initState: T) => {
     store[typedKey] = new Subject(key, initState[typedKey]) as unknown as Store<T>[keyof T];
   });
 
-  const useStore = <K extends keyof T>(key: K, listener: Listener<T[K]>): (() => void) => {
-    checkKey(store, key);
-
-    (store[key] as unknown as Subject<T[K]>).subscribe(listener);
-    
-    const unmount = () => {
-      (store[key] as unknown as Subject<T[K]>).unsubscribe(listener);
-    };
-
-    return unmount;
-  };
-
   const get = <K extends keyof T>(key: K) => {
     checkKey(store, key);
     return store[key].value as T[K];
   };
 
-  const set = <K extends keyof T>(key: K, value: T[K], isCallListener: boolean = true) => {
+  const set = <K extends keyof T>(key: K, value: T[K]) => {
     checkKey(store, key);
-    (store[key] as unknown as Subject<T[K]>).notify(value, isCallListener);
+    (store[key] as unknown as Subject<T[K]>).notify(value);
+  };
+
+  const addListener = <K extends keyof T>(key: K, listener: Listener<T[K]>) => {
+    checkKey(store, key);
+    (store[key] as unknown as Subject<T[K]>).addListener(listener);
+    return () => removeListener(key, listener); 
+  };
+
+  const removeListener = <K extends keyof T>(key: K, listener: Listener<T[K]>) => {
+    checkKey(store, key);
+    (store[key] as unknown as Subject<T[K]>).removeListener(listener);
   };
 
   return {
-    useStore,
     get,
     set,
+    addListener,
+    removeListener,
   };
 };

@@ -7,7 +7,7 @@ describe('Subject', () => {
     let value = 0;
     let name = '';
 
-    subj.subscribe((_name, _value) => {
+    subj.addListener((_name, _value) => {
       name = _name;
       value = _value;
     });

@@ -1,3 +1,6 @@
+> ⚠️ Version 2.x introduces breaking changes compared to 1.x  
+> See MIGRATION_v1_to_v2.md for details.
+
 # observable-store-light
 
 A **minimal reactive state manager** for projects where you want simple shared state without overhead. 
@@ -60,8 +63,11 @@ pnpm add observable-store-light
 * **createStore: <T extends object>(initData: T)** 
 Creates a new isolated store instance.
 
-* **useStore: <K extends keyof T>(key: K) => T[K]** 
-That subscribes a listener to a specific store key.
+* **addListener: <K extends keyof T>(key: K) => T[K]** 
+Attach listener to a specific store key.
+
+* **removeListener: <K extends keyof T>(key: K) => T[K]** 
+Attach listener to a specific store key.
 
 * **get: <K extends keyof T>(key: K) => T[K]** 
 Reads the value by key.
@@ -90,7 +96,7 @@ Attach listener
 ```tsx
 let name = '';
 let value = 0;
-useStore('count', (_name, _value) => {
+addListener('count', (_name, _value) => {
   name = _name;
   value = _value;
 });

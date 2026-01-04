@@ -3,24 +3,24 @@ import { createStore } from '../src';
 
 describe('useStore', () => {
   it('updates value with useStore', () => {
-    const { useStore } = createStore({ count: 1 });
+    const { addListener } = createStore({ count: 1 });
     const listener = vi.fn<(name: string, value: number) => void>();
 
-    useStore('count', listener);
+    addListener('count', listener);
 
     expect(listener).toHaveBeenCalledWith('count', 1);
   });
 
   it('multiple listeners', () => {
-    const { useStore } = createStore({ count: 1 });
+    const { addListener } = createStore({ count: 1 });
     let name = '';
     let value = 0;
 
-    useStore('count', (_name, _value) => {
+    addListener('count', (_name, _value) => {
       name = _name;
     });
 
-    useStore('count', (_name, _value) => {
+    addListener('count', (_name, _value) => {
       value = _value;
     });
 
@@ -30,11 +30,11 @@ describe('useStore', () => {
   });
 
   it('get and set', () => {
-    const { useStore, get, set } = createStore({ count: 0 });
+    const { addListener, get, set } = createStore({ count: 0 });
     let name = '';
     let value = 0;
     set('count', get('count') + 1);
-    useStore('count', (_name, _value) => {
+    addListener('count', (_name: string, _value: number) => {
       name = _name;
       value = _value;
     });
@@ -45,23 +45,23 @@ describe('useStore', () => {
   });
 
   it('unmount', () => {
-    const { useStore, get, set } = createStore({ count: 0 });
+    const { addListener, removeListener, get, set } = createStore({ count: 0 });
     let name = '';
     let value = 0;
     set('count', get('count') + 1);
-    const unmount = useStore('count', (_name, _value) => {
+    const listener = (_name: string, _value: number) => {
       name = _name;
       value = _value;
-    });
+    };
+    addListener('count', listener);
 
     expect(name).toBe('count');
 
     expect(value).toBe(1);
 
-    unmount()
+    removeListener('count', listener);
 
     set('count', get('count') + 1);
     expect(value).toBe(1);
   });
-
 });
