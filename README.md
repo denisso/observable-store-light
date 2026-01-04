@@ -7,7 +7,7 @@ A **minimal reactive state manager** for projects where you want simple shared s
 
 [CDN](https://www.jsdelivr.com/package/npm/observable-store-light)
 ```
-<script src="https://cdn.jsdelivr.net/npm/observable-store-light@1.0.1/dist/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/observable-store-light@2.0.1/dist/index.min.js"></script>
 ```
 
 ---

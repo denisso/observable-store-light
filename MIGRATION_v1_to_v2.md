@@ -7,7 +7,7 @@ This change makes the behavior more predictable and familiar to most JS develope
 
 API v1
 
-```
+```ts
 const { useStore, get, set } = createStore({ count: 0 });
 
 let name = '';
@@ -29,7 +29,7 @@ console.log(value); // still 1
 ```
 
 API v2
-```
+```ts
 const { addListener, removeListener, get, set } = createStore({ count: 0 });
 
 let name = '';
