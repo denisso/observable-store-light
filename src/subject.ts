@@ -17,9 +17,11 @@ export class Subject<T> {
     this.value = value;
   }
 
-  addListener(listener: Listener<T>) {
+  addListener(listener: Listener<T>, autoCallListener: boolean = true) {
     this.listeners.add(listener);
-    listener(this.name, this.value);
+    if (autoCallListener) {
+      listener(this.name, this.value);
+    }
   }
 
   removeListener(listener: Listener<T>) {

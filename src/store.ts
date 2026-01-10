@@ -46,10 +46,14 @@ export const createStore = <T extends object>(initState: T) => {
     (store[key] as unknown as Subject<T[K]>).notify(value);
   };
 
-  const addListener = <K extends keyof T>(key: K, listener: Listener<T[K]>) => {
+  const addListener = <K extends keyof T>(
+    key: K,
+    listener: Listener<T[K]>,
+    autoCallListener: boolean = true,
+  ) => {
     checkKey(store, key);
-    (store[key] as unknown as Subject<T[K]>).addListener(listener);
-    return () => removeListener(key, listener); 
+    (store[key] as unknown as Subject<T[K]>).addListener(listener, autoCallListener);
+    return () => removeListener(key, listener);
   };
 
   const removeListener = <K extends keyof T>(key: K, listener: Listener<T[K]>) => {
