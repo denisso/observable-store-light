@@ -61,11 +61,11 @@ export const createStore = <T extends object>(initState: T) => {
     store[typedKey] = new Subject(key, initState[typedKey]) as unknown as Store<T>[keyof T];
   });
 
-  class StoreAPi<K extends keyof T> {
+  class StoreAPi {
     /**
      * Returns the current value for a given key.
      */
-    get(key: K) {
+    get<K extends keyof T>(key: K) {
       checkKey(store, key);
       return store[key].value as T[K];
     }
@@ -73,7 +73,7 @@ export const createStore = <T extends object>(initState: T) => {
      * Updates the value for a given key
      * and notifies all registered listeners.
      */
-    set(key: K, value: T[K]) {
+    set<K extends keyof T>(key: K, value: T[K]) {
       checkKey(store, key);
       (store[key] as unknown as Subject<T[K]>).notify(value);
     }
@@ -86,7 +86,11 @@ export const createStore = <T extends object>(initState: T) => {
      *                         with the current value
      * @returns Unsubscribe function
      */
-    addListener(key: K, listener: Listener<T[K]>, autoCallListener: boolean = true) {
+    addListener<K extends keyof T>(
+      key: K,
+      listener: Listener<T[K]>,
+      autoCallListener: boolean = true,
+    ) {
       checkKey(store, key);
       (store[key] as unknown as Subject<T[K]>).addListener(listener, autoCallListener);
       return () => this.removeListener(key, listener);
@@ -98,7 +102,7 @@ export const createStore = <T extends object>(initState: T) => {
      * @param key Store key to subscribe to
      * @param listener Callback invoked on value changes
      */
-    removeListener(key: K, listener: Listener<T[K]>) {
+    removeListener<K extends keyof T>(key: K, listener: Listener<T[K]>) {
       checkKey(store, key);
       (store[key] as unknown as Subject<T[K]>).removeListener(listener);
     }

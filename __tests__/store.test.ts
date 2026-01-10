@@ -44,6 +44,14 @@ describe('useStore', () => {
     expect(value).toBe(1);
   });
 
+  it('multiple props in store', () => {
+    const { get, set } = createStore({ count: 0, name: '' });
+    set('count', get('count') + 1);
+    set('name', 'test');
+    expect(get('count')).toBe(1);
+    expect(get('name')).toBe('test');
+  });
+
   it('unmount', () => {
     const { addListener, removeListener, get, set } = createStore({ count: 0 });
     let name = '';
