@@ -60,58 +60,49 @@ export const createStore = <T extends object>(initState: T) => {
     const typedKey = key as keyof T;
     store[typedKey] = new Subject(key, initState[typedKey]) as unknown as Store<T>[keyof T];
   });
-  
-  /**
-   * Returns the current value for a given key.
-   */
-  const get = <K extends keyof T>(key: K) => {
-    checkKey(store, key);
-    return store[key].value as T[K];
-  };
 
-  /**
-   * Updates the value for a given key
-   * and notifies all registered listeners.
-   */
-  const set = <K extends keyof T>(key: K, value: T[K]) => {
-    checkKey(store, key);
-    (store[key] as unknown as Subject<T[K]>).notify(value);
-  };
+  class StoreAPi<K extends keyof T> {
+    /**
+     * Returns the current value for a given key.
+     */
+    get(key: K) {
+      checkKey(store, key);
+      return store[key].value as T[K];
+    }
+    /**
+     * Updates the value for a given key
+     * and notifies all registered listeners.
+     */
+    set(key: K, value: T[K]) {
+      checkKey(store, key);
+      (store[key] as unknown as Subject<T[K]>).notify(value);
+    }
+    /**
+     * Subscribes a listener to changes of a specific key.
+     *
+     * @param key Store key to subscribe to
+     * @param listener Callback invoked on value changes
+     * @param autoCallListener Whether to call the listener immediately
+     *                         with the current value
+     * @returns Unsubscribe function
+     */
+    addListener(key: K, listener: Listener<T[K]>, autoCallListener: boolean = true) {
+      checkKey(store, key);
+      (store[key] as unknown as Subject<T[K]>).addListener(listener, autoCallListener);
+      return () => this.removeListener(key, listener);
+    }
 
-  /**
-   * Subscribes a listener to changes of a specific key.
-   *
-   * @param key Store key to subscribe to
-   * @param listener Callback invoked on value changes
-   * @param autoCallListener Whether to call the listener immediately
-   *                         with the current value
-   * @returns Unsubscribe function
-   */
-  const addListener = <K extends keyof T>(
-    key: K,
-    listener: Listener<T[K]>,
-    autoCallListener: boolean = true,
-  ) => {
-    checkKey(store, key);
-    (store[key] as unknown as Subject<T[K]>).addListener(listener, autoCallListener);
-    return () => removeListener(key, listener);
-  };
+    /**
+     * Removes a previously registered listener for a key.
+     *
+     * @param key Store key to subscribe to
+     * @param listener Callback invoked on value changes
+     */
+    removeListener(key: K, listener: Listener<T[K]>) {
+      checkKey(store, key);
+      (store[key] as unknown as Subject<T[K]>).removeListener(listener);
+    }
+  }
 
-  /**
-   * Removes a previously registered listener for a key.
-   *
-   * @param key Store key to subscribe to
-   * @param listener Callback invoked on value changes
-   */
-  const removeListener = <K extends keyof T>(key: K, listener: Listener<T[K]>) => {
-    checkKey(store, key);
-    (store[key] as unknown as Subject<T[K]>).removeListener(listener);
-  };
-
-  return {
-    get,
-    set,
-    addListener,
-    removeListener,
-  };
+  return new StoreAPi();
 };
