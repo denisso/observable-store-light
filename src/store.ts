@@ -31,7 +31,7 @@ const checkKey = (object: object, key: PropertyKey) => {
  *
  * If T has no keys, Store<T> becomes never.
  */
-type Store<T extends object> = keyof T extends never
+export type Store<T extends object> = keyof T extends never
   ? never
   : {
       [K in keyof T]: Subject<T[K]>;
