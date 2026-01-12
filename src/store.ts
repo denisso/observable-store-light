@@ -31,7 +31,7 @@ const checkKey = (object: object, key: PropertyKey) => {
  *
  * If T has no keys, Store<T> becomes never.
  */
-export type Store<T extends object> = keyof T extends never
+type Store<T extends object> = keyof T extends never
   ? never
   : {
       [K in keyof T]: Subject<T[K]>;
@@ -61,7 +61,7 @@ export const createStore = <T extends object>(initState: T) => {
     store[typedKey] = new Subject(key, initState[typedKey]) as unknown as Store<T>[keyof T];
   });
 
-  class StoreAPi {
+  class StoreAPi<T> {
     /**
      * Returns the current value for a given key.
      */
@@ -108,5 +108,7 @@ export const createStore = <T extends object>(initState: T) => {
     }
   }
 
-  return new StoreAPi();
+  return new StoreAPi<T>();
 };
+
+export type StoreApi<T extends object> = ReturnType<typeof createStore<T>>
