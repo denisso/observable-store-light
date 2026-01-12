@@ -6,8 +6,8 @@ on:
       - main
 
 permissions:
-  contents: write      # для коммитов и тегов
-  id-token: write      # для Trusted Publishing (npm)
+  contents: write   
+  id-token: write      
 
 jobs:
   release:
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # обязательно для тегов
+          fetch-depth: 0 
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -59,7 +59,8 @@ jobs:
         run: |
           rm -f ~/.npmrc
           npm config delete //registry.npmjs.org/:_authToken || true
-          
+          npm config delete registry || true
+
       - name: Publish to npm (Trusted Publishing)
         run: npm publish
 
