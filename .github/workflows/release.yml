@@ -55,11 +55,9 @@ jobs:
           GIT_AUTHOR_EMAIL: github-actions@github.com
           GIT_COMMITTER_NAME: github-actions
           GIT_COMMITTER_EMAIL: github-actions@github.com
-      - name: Cleanup old npm auth
-        run: |
-          rm -f ~/.npmrc
-          npm config delete //registry.npmjs.org/:_authToken || true
-          npm config delete registry || true
+          
+      - name: Setup npm auth
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
       - name: Publish to npm (Trusted Publishing)
         run: npm publish
