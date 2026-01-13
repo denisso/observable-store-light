@@ -1,3 +1,3 @@
-export const error = (message: string) => {
-  throw Error('observable-store-light: ' + message);
+export const ErrorWithMessage = (message: string) => {
+  return Error('observable-store-light: ' + message);
 };

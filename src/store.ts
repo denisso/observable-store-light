@@ -1,5 +1,5 @@
 import { Subject } from './subject';
-import { error } from './error';
+import { ErrorWithMessage } from './error';
 
 /**
  * Formats and throws an error for a missing store key.
@@ -10,7 +10,7 @@ const errorKey = (key: PropertyKey) => {
   if (typeof key == 'string' || typeof key == 'number') {
     strKey = String(key);
   }
-  error(`There is no key "${strKey}" in the store`);
+  throw ErrorWithMessage(`There is no key "${strKey}" in the store`);
 };
 
 /**
@@ -111,4 +111,4 @@ export const createStore = <T extends object>(initState: T) => {
   return new StoreAPi<T>();
 };
 
-export type StoreApi<T extends object> = ReturnType<typeof createStore<T>>
+export type StoreApi<T extends object> = ReturnType<typeof createStore<T>>;
