@@ -44,15 +44,25 @@ describe('useStore', () => {
     expect(value).toEqual(1);
   });
 
-  it('multiple props in store and mutate initial state', () => {
-    const state = { count: 0, name: '' };
-    const { get, set } = createStore(state, true);
+  it('multiple props in store', () => {
+    const { get, set } = createStore({ count: 0, name: '' });
     set('count', get('count') + 1);
     set('name', 'test');
     expect(get('count')).toEqual(1);
     expect(get('name')).toEqual('test');
-    console.log(state)
-    expect(state).toEqual({ count: 1, name: 'test' });
+  });
+
+  it('mutate initial state', () => {
+    const state1 = { count: 0, name: '' };
+    const state2 = { count: 0, name: '' };
+    const store1 = createStore(state1);
+    const store2 = createStore(state2, true);
+    for (const store of [store1, store2]) {
+      store.set('count', store.get('count') + 1);
+      store.set('name', 'test');
+    }
+    expect(state1).toEqual({ count: 0, name: '' });
+    expect(state2).toEqual({ count: 1, name: 'test' });
   });
 
   it('unmount', () => {
