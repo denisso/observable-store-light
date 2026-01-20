@@ -5,7 +5,7 @@ import { ErrorWithMessage } from './error';
  * Formats and throws an error for a missing store key.
  * Handles string, number and symbol keys for better diagnostics.
  */
-const errorKey = (key: PropertyKey) => {
+const formatErrorKeyMessage = (key: PropertyKey) => {
   let strKey = `typeof ${typeof key}`;
   if (typeof key == 'string' || typeof key == 'number') {
     strKey = String(key);
@@ -22,7 +22,7 @@ const checkKey = (object: object, key: PropertyKey) => {
   if (object.hasOwnProperty(key)) {
     return;
   }
-  errorKey(key);
+  throw formatErrorKeyMessage(key);
 };
 
 /**
@@ -60,6 +60,8 @@ export const createStore = <T extends object>(initState: T) => {
     const typedKey = key as keyof T;
     store[typedKey] = new Subject(key, initState[typedKey]) as unknown as Store<T>[keyof T];
   });
+
+
 
   class StoreAPi<T> {
     /**
