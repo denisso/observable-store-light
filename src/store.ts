@@ -83,6 +83,14 @@ export const createStore = <T extends object>(initState: T, isMutateState?: bool
       checkKey(store, key);
       (store[key] as unknown as Subject<T[K]>).notify(value);
     }
+
+    /**
+     * return initState
+     * @returns initState
+     */
+    getState() {
+      return initState;
+    }
     /**
      * Subscribes a listener to changes of a specific key.
      *

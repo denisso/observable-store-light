@@ -2,6 +2,11 @@ import { describe, it, expect, vi } from 'vitest';
 import { createStore } from '../src';
 
 describe('useStore', () => {
+  it('get init state', () => {
+    const store = createStore({ count: 1 });
+    expect(store.getState()).toEqual({ count: 1 });
+  });
+
   it('updates value with useStore', () => {
     const { addListener } = createStore({ count: 1 });
     const listener = vi.fn<(name: string, value: number) => void>();
