@@ -49,19 +49,23 @@ export type Listener<T> = (name: string, value: T) => void;
  * Each property of the initial state is converted into a Subject,
  * allowing independent subscriptions per key.
  *
- * @param initState Initial store state
+ * @param state - Initial store state
+ * @param isMutateState - [optional] is mutate initState
  * @returns Store API with get/set and subscription methods
  */
-export const createStore = <T extends object>(initState: T) => {
+export const createStore = <T extends object>(initState: T, isMutateState?: boolean) => {
   // Internal store object (key → Subject)
   const store = {} as Store<T>;
   // Initialize a Subject for each key in the initial state
   Object.keys(initState).forEach((key) => {
     const typedKey = key as keyof T;
     store[typedKey] = new Subject(key, initState[typedKey]) as unknown as Store<T>[keyof T];
+    if (isMutateState) {
+      store[typedKey].addListener((_, value) => {
+        initState[typedKey] = value as T[keyof T];
+      }, false);
+    }
   });
-
-
 
   class StoreAPi<T> {
     /**
@@ -91,10 +95,10 @@ export const createStore = <T extends object>(initState: T) => {
     addListener<K extends keyof T>(
       key: K,
       listener: Listener<T[K]>,
-      autoCallListener: boolean = true,
+      isAutoCallListener: boolean = true,
     ) {
       checkKey(store, key);
-      (store[key] as unknown as Subject<T[K]>).addListener(listener, autoCallListener);
+      (store[key] as unknown as Subject<T[K]>).addListener(listener, isAutoCallListener);
       return () => this.removeListener(key, listener);
     }
 

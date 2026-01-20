@@ -24,9 +24,9 @@ describe('useStore', () => {
       value = _value;
     });
 
-    expect(name).toBe('count');
+    expect(name).toEqual('count');
 
-    expect(value).toBe(1);
+    expect(value).toEqual(1);
   });
 
   it('get and set', () => {
@@ -39,17 +39,20 @@ describe('useStore', () => {
       value = _value;
     });
 
-    expect(name).toBe('count');
+    expect(name).toEqual('count');
 
-    expect(value).toBe(1);
+    expect(value).toEqual(1);
   });
 
-  it('multiple props in store', () => {
-    const { get, set } = createStore({ count: 0, name: '' });
+  it('multiple props in store and mutate initial state', () => {
+    const state = { count: 0, name: '' };
+    const { get, set } = createStore(state, true);
     set('count', get('count') + 1);
     set('name', 'test');
-    expect(get('count')).toBe(1);
-    expect(get('name')).toBe('test');
+    expect(get('count')).toEqual(1);
+    expect(get('name')).toEqual('test');
+    console.log(state)
+    expect(state).toEqual({ count: 1, name: 'test' });
   });
 
   it('unmount', () => {
@@ -63,13 +66,13 @@ describe('useStore', () => {
     };
     addListener('count', listener);
 
-    expect(name).toBe('count');
+    expect(name).toEqual('count');
 
-    expect(value).toBe(1);
+    expect(value).toEqual(1);
 
     removeListener('count', listener);
 
     set('count', get('count') + 1);
-    expect(value).toBe(1);
+    expect(value).toEqual(1);
   });
 });
