@@ -31,7 +31,7 @@ const checkKey = (object: object, key: PropertyKey) => {
  *
  * If T has no keys, Store<T> becomes never.
  */
-type Store<T extends object> = keyof T extends never
+type _Store<T extends object> = keyof T extends never
   ? never
   : {
       [K in keyof T]: Subject<T[K]>;
@@ -55,11 +55,11 @@ export type Listener<T> = (name: string, value: T) => void;
  */
 export const createStore = <T extends object>(initState: T, isMutateState?: boolean) => {
   // Internal store object (key → Subject)
-  const store = {} as Store<T>;
+  const store = {} as _Store<T>;
   // Initialize a Subject for each key in the initial state
   Object.keys(initState).forEach((key) => {
     const typedKey = key as keyof T;
-    store[typedKey] = new Subject(key, initState[typedKey]) as unknown as Store<T>[keyof T];
+    store[typedKey] = new Subject(key, initState[typedKey]) as unknown as _Store<T>[keyof T];
     if (isMutateState) {
       store[typedKey].addListener((_, value) => {
         initState[typedKey] = value as T[keyof T];
@@ -67,7 +67,7 @@ export const createStore = <T extends object>(initState: T, isMutateState?: bool
     }
   });
 
-  class StoreAPi<T> {
+  class Store<T> {
     /**
      * Returns the current value for a given key.
      */
@@ -114,7 +114,7 @@ export const createStore = <T extends object>(initState: T, isMutateState?: bool
     }
   }
 
-  return new StoreAPi<T>();
+  return new Store<T>();
 };
 
-export type StoreApi<T extends object> = ReturnType<typeof createStore<T>>;
+export type Store<T extends object> = ReturnType<typeof createStore<T>>;
