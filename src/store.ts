@@ -49,13 +49,14 @@ export type Listener<T> = (name: string, value: T) => void;
  * Each property of the initial state is converted into a Subject,
  * allowing independent subscriptions per key.
  *
- * @param state - Initial store state
+ * @param initState - Initial store state
  * @param isMutateState - [optional] is mutate initState
  * @returns Store API with get/set and subscription methods
  */
 export const createStore = <T extends object>(initState: T, isMutateState?: boolean) => {
   // Internal store object (key → Subject)
   const store = {} as _Store<T>;
+
   // Initialize a Subject for each key in the initial state
   Object.keys(initState).forEach((key) => {
     const typedKey = key as keyof T;
@@ -67,7 +68,7 @@ export const createStore = <T extends object>(initState: T, isMutateState?: bool
     }
   });
 
-  class Store<T> {
+  class Store {
     /**
      * Returns the current value for a given key.
      */
@@ -90,6 +91,23 @@ export const createStore = <T extends object>(initState: T, isMutateState?: bool
      */
     getState() {
       return initState;
+    }
+
+    /**
+     * Set state
+     * 
+     * @param state - Initial store state
+     * @param _isMutateState - [optional] is mutate initState
+     */
+    setState(state: T, _isMutateState?: boolean) {
+      if (isMutateState !== undefined) {
+        isMutateState = _isMutateState;
+      }
+      initState = state;
+      Object.keys(state).forEach((key) => {
+        const typedKey = key as keyof T;
+        this.set(typedKey, state[typedKey]);
+      });
     }
     /**
      * Subscribes a listener to changes of a specific key.
@@ -122,7 +140,7 @@ export const createStore = <T extends object>(initState: T, isMutateState?: bool
     }
   }
 
-  return new Store<T>();
+  return new Store();
 };
 
 export type Store<T extends object> = ReturnType<typeof createStore<T>>;
