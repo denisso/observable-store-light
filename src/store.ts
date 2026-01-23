@@ -1,17 +1,5 @@
 import { Subject } from './subject';
-import { ErrorWithMessage } from './error';
-
-/**
- * Formats and throws an error for a missing store key.
- * Handles string, number and symbol keys for better diagnostics.
- */
-const formatErrorKeyMessage = (key: PropertyKey) => {
-  let strKey = `typeof ${typeof key}`;
-  if (typeof key == 'string' || typeof key == 'number') {
-    strKey = String(key);
-  }
-  throw ErrorWithMessage(`There is no key "${strKey}" in the store`);
-};
+import { formatError } from './error';
 
 /**
  * Runtime check that ensures the key exists in the store object.
@@ -22,7 +10,7 @@ const checkKey = (object: object, key: PropertyKey) => {
   if (object.hasOwnProperty(key)) {
     return;
   }
-  throw formatErrorKeyMessage(key);
+  throw formatError["errorKeyMessage"](key);
 };
 
 /**

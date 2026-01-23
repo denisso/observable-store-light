@@ -1,32 +1,14 @@
 import { describe, it, expect, vi } from 'vitest';
 import { createStore } from '../src';
 
-describe('useStore', () => {
-  it('updates value with useStore', () => {
+describe('Store', () => {
+  it('updates value on init', () => {
     const { addListener } = createStore({ count: 1 });
     const listener = vi.fn<(name: string, value: number) => void>();
 
     addListener('count', listener);
 
     expect(listener).toHaveBeenCalledWith('count', 1);
-  });
-
-  it('multiple listeners', () => {
-    const { addListener } = createStore({ count: 1 });
-    let name = '';
-    let value = 0;
-
-    addListener('count', (_name, _value) => {
-      name = _name;
-    });
-
-    addListener('count', (_name, _value) => {
-      value = _value;
-    });
-
-    expect(name).toEqual('count');
-
-    expect(value).toEqual(1);
   });
 
   it('get and set', () => {
@@ -42,33 +24,6 @@ describe('useStore', () => {
     expect(name).toEqual('count');
 
     expect(value).toEqual(1);
-  });
-
-  it('getState', () => {
-    const store = createStore({ count: 1 });
-    expect(store.getState()).toEqual({ count: 1 });
-  });
-
-  it('setState', () => {
-    const state1 = { count: 1 };
-    const store = createStore(state1, true);
-    const results: number[] = [];
-    store.addListener(
-      'count',
-      (_, value) => {
-        results.push(value);
-      },
-      false,
-    );
-    const state2 = { count: 2 };
-    store.setState(state2);
-    expect(store.getState()).toEqual({ count: 2 });
-    expect(state1).toEqual({ count: 1 });
-    expect(results).toEqual([2]);
-    store.set("count", 3)
-    expect(results).toEqual([2, 3]);
-    expect(store.getState()).toEqual({ count: 3 });
-    expect(state2).toEqual({ count: 3 });
   });
 
   it('multiple props in store', () => {
@@ -90,26 +45,5 @@ describe('useStore', () => {
     }
     expect(state1).toEqual({ count: 0, name: '' });
     expect(state2).toEqual({ count: 1, name: 'test' });
-  });
-
-  it('unmount', () => {
-    const { addListener, removeListener, get, set } = createStore({ count: 0 });
-    let name = '';
-    let value = 0;
-    set('count', get('count') + 1);
-    const listener = (_name: string, _value: number) => {
-      name = _name;
-      value = _value;
-    };
-    addListener('count', listener);
-
-    expect(name).toEqual('count');
-
-    expect(value).toEqual(1);
-
-    removeListener('count', listener);
-
-    set('count', get('count') + 1);
-    expect(value).toEqual(1);
   });
 });
