@@ -7,24 +7,24 @@ import type { Listener } from './store';
  */
 export class Subject<T extends object, K extends keyof T> {
   // Listeners will called when the value is changed
-  private listeners: Set<Listener<T[K]>>;
+  private listeners: Set<Listener<T,K>>;
   // name for value in store
-  private name: string;
+  private name: K;
   public value: T[K];
-  constructor(name: string, value: T[K]) {
+  constructor(name: K, value: T[K]) {
     this.name = name;
     this.listeners = new Set();
     this.value = value;
   }
 
-  addListener(listener: Listener<T[K]>, autoCallListener: boolean = true) {
+  addListener(listener: Listener<T,K>, autoCallListener: boolean = true) {
     this.listeners.add(listener);
     if (autoCallListener) {
       listener(this.name, this.value);
     }
   }
 
-  removeListener(listener: Listener<T[K]>) {
+  removeListener(listener: Listener<T,K>) {
     this.listeners.delete(listener);
   }
 

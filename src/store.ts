@@ -29,7 +29,7 @@ type _Store<T extends object> = keyof T extends never
  * Listener signature for store updates.
  * Receives the key name and the new value.
  */
-export type Listener<T> = (name: string, value: T) => void;
+export type Listener<T extends object, K extends keyof T> = (name: K, value: T[K]) => void;
 
 /**
  * Creates a new isolated store instance.
@@ -37,21 +37,20 @@ export type Listener<T> = (name: string, value: T) => void;
  * Each property of the initial state is converted into a Subject,
  * allowing independent subscriptions per key.
  *
- * @param initState - Initial store state
- * @param isMutateState - [optional] is mutate initState
+ * @param state - Initial store state
+ * @param isMutateState - [optional] is mutate state
  * @returns Store API with get/set and subscription methods
  */
-export const createStore = <T extends object>(initState: T, isMutateState?: boolean) => {
+export const createStore = <T extends object>(state: T, isMutateState?: boolean) => {
   // Internal store object (key → Subject)
   const store = {} as _Store<T>;
-
+  const keys: (keyof T)[] = Object.keys(state) as (keyof T)[];
   // Initialize a Subject for each key in the initial state
-  Object.keys(initState).forEach((key) => {
-    const typedKey = key as keyof T;
-    store[typedKey] = new Subject(key, initState[typedKey]) as unknown as _Store<T>[keyof T];
+  keys.forEach((key) => {
+    store[key] = new Subject<T, keyof T>(key, state[key]) as unknown as _Store<T>[keyof T];
     if (isMutateState) {
-      store[typedKey].addListener((_, value) => {
-        initState[typedKey] = value as T[keyof T];
+      store[key].addListener((_, value) => {
+        state[key] = value as T[keyof T];
       }, false);
     }
   });
@@ -75,29 +74,42 @@ export const createStore = <T extends object>(initState: T, isMutateState?: bool
     }
 
     /**
-     * return initState
+     * return state
      *
-     * @returns initState
+     * @returns state
      */
     getState() {
-      return initState;
+      return state;
     }
 
     /**
      * Set state
      *
-     * @param state - Initial store state
-     * @param _isMutateState - [optional] is mutate initState
+     * @param _state - Initial store state
+     * @param _isMutateState - [optional] is mutate state
      */
-    setState(state: T, _isMutateState?: boolean) {
+    setState(_state: T, _isMutateState?: boolean) {
       if (isMutateState !== undefined) {
         isMutateState = _isMutateState;
       }
-      initState = state;
-      Object.keys(state).forEach((key) => {
+      state = _state;
+      Object.keys(_state).forEach((key) => {
         const typedKey = key as keyof T;
-        store[typedKey].notify(state[typedKey] as any);
+        store[typedKey].notify(_state[typedKey] as any);
       });
+    }
+    /**
+     * Check state relevance
+     * 
+     * @returns boolean
+     */
+    isStateActual(): boolean {
+      for (const key of keys) {
+        if(store[key].value !== state[key]){
+          return false
+        }
+      }
+      return true;
     }
 
     /**
@@ -111,7 +123,7 @@ export const createStore = <T extends object>(initState: T, isMutateState?: bool
      */
     addListener<K extends keyof T>(
       key: K,
-      listener: Listener<T[K]>,
+      listener: Listener<T, K>,
       isAutoCallListener: boolean = true,
     ) {
       checkKey(store, key);
@@ -125,7 +137,7 @@ export const createStore = <T extends object>(initState: T, isMutateState?: bool
      * @param key Store key to subscribe to
      * @param listener Callback invoked on value changes
      */
-    removeListener<K extends keyof T>(key: K, listener: Listener<T[K]>) {
+    removeListener<K extends keyof T>(key: K, listener: Listener<T, K>) {
       checkKey(store, key);
       (store[key] as unknown as Subject<T, K>).removeListener(listener);
     }

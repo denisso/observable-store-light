@@ -1,24 +1,24 @@
-import { describe, it, expect, vi, } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { createStore } from '../src';
 
 describe('Listeners', () => {
   it('multiple listeners', () => {
     const { addListener, set } = createStore({ count: 1, text: '' });
-    let count: { name: string; value: number } = {name: "", value: 0};
-    let text: { name: string; value: string } = {name: "", value: ""};;
+    let count: { name: string; value: number } = { name: '', value: 0 };
+    let text: { name: string; value: string } = { name: '', value: '' };
 
     addListener('count', (name, value) => {
       count = { name, value };
     });
 
     addListener('text', (name, value) => {
-      text = {name, value}
+      text = { name, value };
     });
 
-    set("count", 1)
-    set("text", "test")
-    expect(count).toEqual({name: "count", value: 1});
-    expect(text).toEqual({name: "text", value: "test"});
+    set('count', 1);
+    set('text', 'test');
+    expect(count).toEqual({ name: 'count', value: 1 });
+    expect(text).toEqual({ name: 'text', value: 'test' });
   });
 
   it('removeListener', () => {
