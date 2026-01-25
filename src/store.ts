@@ -10,7 +10,7 @@ const checkKey = (object: object, key: PropertyKey) => {
   if (object.hasOwnProperty(key)) {
     return;
   }
-  throw formatError["errorKeyMessage"](key);
+  throw formatError['errorKeyMessage'](key);
 };
 
 /**
@@ -22,7 +22,7 @@ const checkKey = (object: object, key: PropertyKey) => {
 type _Store<T extends object> = keyof T extends never
   ? never
   : {
-      [K in keyof T]: Subject<T[K]>;
+      [K in keyof T]: Subject<T, K>;
     };
 
 /**
@@ -64,17 +64,19 @@ export const createStore = <T extends object>(initState: T, isMutateState?: bool
       checkKey(store, key);
       return store[key].value as T[K];
     }
+
     /**
      * Updates the value for a given key
      * and notifies all registered listeners.
      */
     set<K extends keyof T>(key: K, value: T[K]) {
       checkKey(store, key);
-      (store[key] as unknown as Subject<T[K]>).notify(value);
+      (store[key] as unknown as Subject<T, K>).notify(value);
     }
 
     /**
      * return initState
+     *
      * @returns initState
      */
     getState() {
@@ -83,7 +85,7 @@ export const createStore = <T extends object>(initState: T, isMutateState?: bool
 
     /**
      * Set state
-     * 
+     *
      * @param state - Initial store state
      * @param _isMutateState - [optional] is mutate initState
      */
@@ -94,9 +96,10 @@ export const createStore = <T extends object>(initState: T, isMutateState?: bool
       initState = state;
       Object.keys(state).forEach((key) => {
         const typedKey = key as keyof T;
-        this.set(typedKey, state[typedKey]);
+        store[typedKey].notify(state[typedKey] as any);
       });
     }
+
     /**
      * Subscribes a listener to changes of a specific key.
      *
@@ -112,7 +115,7 @@ export const createStore = <T extends object>(initState: T, isMutateState?: bool
       isAutoCallListener: boolean = true,
     ) {
       checkKey(store, key);
-      (store[key] as unknown as Subject<T[K]>).addListener(listener, isAutoCallListener);
+      (store[key] as unknown as Subject<T, K>).addListener(listener, isAutoCallListener);
       return () => this.removeListener(key, listener);
     }
 
@@ -124,7 +127,7 @@ export const createStore = <T extends object>(initState: T, isMutateState?: bool
      */
     removeListener<K extends keyof T>(key: K, listener: Listener<T[K]>) {
       checkKey(store, key);
-      (store[key] as unknown as Subject<T[K]>).removeListener(listener);
+      (store[key] as unknown as Subject<T, K>).removeListener(listener);
     }
   }
 
