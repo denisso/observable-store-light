@@ -117,14 +117,14 @@ export const createStore = <T extends object>(state: T, isMutateState?: boolean)
      *
      * @param key Store key to subscribe to
      * @param listener Callback invoked on value changes
-     * @param autoCallListener Whether to call the listener immediately
+     * @param autoCallListener [default: false] - Whether to call the listener immediately
      *                         with the current value
      * @returns Unsubscribe function
      */
     addListener<K extends keyof T>(
       key: K,
       listener: Listener<T, K>,
-      isAutoCallListener: boolean = true,
+      isAutoCallListener: boolean = false,
     ) {
       checkKey(store, key);
       (store[key] as unknown as Subject<T, K>).addListener(listener, isAutoCallListener);

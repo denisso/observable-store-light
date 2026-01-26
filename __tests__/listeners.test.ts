@@ -1,11 +1,12 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { createStore } from '../src';
 
 describe('Listeners', () => {
   it('multiple listeners', () => {
-    const { addListener, set } = createStore({ count: 1, text: '' });
-    let count: { name: string; value: number } = { name: '', value: 0 };
-    let text: { name: string; value: string } = { name: '', value: '' };
+    const state = { count: 0, text: '' }
+    const { addListener, set } = createStore(state);
+    let count: { name: string; value: number } = { name: '', value: state.count };
+    let text: { name: string; value: string } = { name: '', value: state.text };
 
     addListener('count', (name, value) => {
       count = { name, value };
@@ -25,13 +26,13 @@ describe('Listeners', () => {
     const { addListener, removeListener, get, set } = createStore({ count: 0 });
     let name = '';
     let value = 0;
-    set('count', get('count') + 1);
+
     const listener = (_name: string, _value: number) => {
       name = _name;
       value = _value;
     };
     addListener('count', listener);
-
+    set('count', get('count') + 1);
     expect(name).toEqual('count');
 
     expect(value).toEqual(1);
