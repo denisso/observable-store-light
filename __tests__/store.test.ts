@@ -6,7 +6,7 @@ describe('Store', () => {
     const { addListener } = createStore({ count: 1 });
     const listener = vi.fn<(name: string, value: number) => void>();
 
-    addListener('count', listener);
+    addListener('count', listener, true);
 
     expect(listener).toHaveBeenCalledWith('count', 1);
   });
@@ -15,12 +15,12 @@ describe('Store', () => {
     const { addListener, get, set } = createStore({ count: 0 });
     let name = '';
     let value = 0;
-    set('count', get('count') + 1);
+
     addListener('count', (_name: string, _value: number) => {
       name = _name;
       value = _value;
     });
-
+    set('count', get('count') + 1);
     expect(name).toEqual('count');
 
     expect(value).toEqual(1);
