@@ -1,1 +1,1 @@
-export { createStore, type Listener, type Store } from './store';
+export { createStore, type Listener, Store } from './store';

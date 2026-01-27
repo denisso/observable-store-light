@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { createStore } from '../src';
+import { createStore, Store } from '../src';
 
 describe('Store', () => {
   it('updates value on init', () => {
@@ -45,5 +45,21 @@ describe('Store', () => {
     }
     expect(state1).toEqual({ count: 0, name: '' });
     expect(state2).toEqual({ count: 1, name: 'test' });
+  });
+
+  it('use class Store ', () => {
+    type Counter = { count: number };
+    const store = new Store<Counter>({ count: 0 });
+    let name = '';
+    let value = 0;
+
+    store.addListener('count', (_name: string, _value: number) => {
+      name = _name;
+      value = _value;
+    });
+    store.set('count', store.get('count') + 1);
+    expect(name).toEqual('count');
+
+    expect(value).toEqual(1);
   });
 });
