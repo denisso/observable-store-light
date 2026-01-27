@@ -97,6 +97,9 @@ export class Store<T extends object> {
   }
   /**
    * Returns the current value for a given key.
+   *
+   * @param key K - key
+   * @returns T[K] - value
    */
   get<K extends keyof T>(key: K) {
     checkKey(this.values, key);
@@ -106,10 +109,14 @@ export class Store<T extends object> {
   /**
    * Updates the value for a given key
    * and notifies all registered listeners.
+   *
+   * @param key - K - key
+   * @param value - T[K] - value
+   * @param isAlwaysNotify - notify listiners always
    */
-  set<K extends keyof T>(key: K, value: T[K]) {
+  set<K extends keyof T>(key: K, value: T[K], isAlwaysNotify: boolean = false) {
     checkKey(this.values, key);
-    (this.values[key] as unknown as Subject<T, K>).notify(value);
+    (this.values[key] as unknown as Subject<T, K>).notify(value, isAlwaysNotify);
   }
 
   /**
@@ -126,13 +133,13 @@ export class Store<T extends object> {
    *
    * @param state - Initial store state
    * @param isMutateState - [optional] is mutate state
+   * @param isAlwaysNotify - notify listiners always
    */
-  setState(state: T, isMutateState?: boolean) {
-    this.isMutateState = isMutateState ?? this.isMutateState;
-    const s = this.state;
+  setState(state: T, isMutateState: boolean, isAlwaysNotify: boolean = false) {
+    this.isMutateState = isMutateState;
     this.state = state;
     for (const key of this.keys) {
-      this.values[key].notify(this.state[key] as any);
+      this.values[key].notify(this.state[key] as any, isAlwaysNotify);
     }
   }
   /**

@@ -31,12 +31,12 @@ export class Subject<T extends object, K extends keyof T> {
   /**
    * Update the value and notify subscribers.
    * @param value - new value
-   * @param isRunCallback - do not call listeners if false
+   * @param isAlwaysNotify - notify listiners always
    * @returns undefined
    */
-  notify(value: T[K]) {
-    // Do nothing if the new value is the same as the current one
-    if (this.value === value) {
+  notify(value: T[K], isAlwaysNotify: boolean) {
+
+    if (!isAlwaysNotify && this.value === value) {
       return;
     }
 
