@@ -1,6 +1,6 @@
 {
   "name": "observable-store-light",
-  "version": "2.0.16",
+  "version": "2.0.17",
   "description": "A observer-based state manager for node and browser",
   "author": "KUROCHKIN DENIS",
   "license": "MIT",
