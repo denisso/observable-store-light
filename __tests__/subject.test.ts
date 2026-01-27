@@ -3,7 +3,7 @@ import { Subject } from '../src/subject';
 
 describe('Subject', () => {
   it('notifies subscribers', () => {
-    const subj = new Subject('value', 1);
+    const subj = new Subject<{value: number}, "value">('value', 1);
     let value = 0;
     let name = '';
 
@@ -15,7 +15,7 @@ describe('Subject', () => {
     expect(value).toBe(1);
     expect(name).toBe('value');
 
-    subj.notify(2);
+    subj.notify(2, false);
 
     expect(value).toBe(2);
   });

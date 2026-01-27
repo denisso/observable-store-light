@@ -132,10 +132,10 @@ export class Store<T extends object> {
    * Set state
    *
    * @param state - Initial store state
-   * @param isMutateState - [optional] is mutate state
+   * @param isMutateState - [optional]is mutate state
    * @param isAlwaysNotify - notify listiners always
    */
-  setState(state: T, isMutateState: boolean, isAlwaysNotify: boolean = false) {
+  setState(state: T, isMutateState: boolean = false, isAlwaysNotify: boolean = false) {
     this.isMutateState = isMutateState;
     this.state = state;
     for (const key of this.keys) {
