@@ -129,7 +129,7 @@ export class Store<T extends object> {
    */
   setState(state: T, isMutateState?: boolean) {
     this.isMutateState = isMutateState ?? this.isMutateState;
-    const s = this.state
+    const s = this.state;
     this.state = state;
     for (const key of this.keys) {
       this.values[key].notify(this.state[key] as any);
